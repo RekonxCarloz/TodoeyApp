@@ -93,13 +93,13 @@ class TodoListViewController: UITableViewController{
     // Load Data method
     func loadData(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil){
         
-        let predicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
+        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
         
-        
-        
-        request.predicate = predicate
-        
-        
+        if let additionalPredicate = predicate{
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionalPredicate])
+        } else{
+            request.predicate = categoryPredicate
+        }
         
         do{
             itemArray = try context.fetch(request)
