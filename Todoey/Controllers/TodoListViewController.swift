@@ -12,13 +12,16 @@ import CoreData
 class TodoListViewController: UITableViewController{
     
     var itemArray = [Item]()
+    var selectedCategory: Category?{
+        didSet{
+            loadData()
+        }
+    }
 
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        loadData()
         
     }
     
@@ -64,6 +67,7 @@ class TodoListViewController: UITableViewController{
             let newItem = Item(context: self.context)
             newItem.title = textFieldText.text!
             newItem.done = false
+            newItem.parentCategory = self.selectedCategory
             self.itemArray.append(newItem)
             self.saveData()
         }
@@ -87,7 +91,16 @@ class TodoListViewController: UITableViewController{
         tableView.reloadData()
     }
     // Load Data method
-    func loadData(with request: NSFetchRequest<Item> = Item.fetchRequest()){
+    func loadData(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil){
+        
+        let predicate = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
+        
+        
+        
+        request.predicate = predicate
+        
+        
+        
         do{
             itemArray = try context.fetch(request)
         }catch{
