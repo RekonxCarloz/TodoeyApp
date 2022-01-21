@@ -18,15 +18,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        let data = Data()
-        data.name = "Carlos"
-        data.age = 24
-        
         do{
             let realm = try Realm()
-            try realm.write{
-                realm.add(data)
-            }
         }catch{
             print("Error al inicializar Realm")
         }
