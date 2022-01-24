@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class TodoListViewController: UITableViewController{
+class TodoListViewController: SwipeCellTableViewController{
     
     var todoItems:Results<Item>?
     let realm = try! Realm()
@@ -21,7 +21,7 @@ class TodoListViewController: UITableViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        tableView.rowHeight = 75.0
     }
     
    
@@ -33,7 +33,8 @@ class TodoListViewController: UITableViewController{
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "toDoItemCell", for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
+        
         if let item = todoItems?[indexPath.row]{
             cell.textLabel?.text = item.title
             // Operador ternario
@@ -59,6 +60,7 @@ class TodoListViewController: UITableViewController{
         }
         
         tableView.deselectRow(at: indexPath, animated: true)
+        tableView.reloadData()
     }
     
     //MARK: - Add new items
@@ -97,7 +99,20 @@ class TodoListViewController: UITableViewController{
         present(alert, animated: true, completion: nil)
     }
     
-    // Load Data method
+    //MARK: - Manipulation Data Section
+    
+    override func updateModel(at indexPath: IndexPath) {
+        if let itemForDeletion = todoItems?[indexPath.row]{
+            do{
+                try realm.write{
+                    realm.delete(itemForDeletion)
+                }
+            }catch{
+            print("Error deleting item selected, \(error)")
+            }
+        }
+    }
+
     func loadData(){
 
         todoItems = selectedCategory?.items.sorted(byKeyPath: "title")
