@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
 class TodoListViewController: SwipeCellTableViewController{
     
@@ -37,6 +38,10 @@ class TodoListViewController: SwipeCellTableViewController{
         
         if let item = todoItems?[indexPath.row]{
             cell.textLabel?.text = item.title
+            if let color = UIColor(hexString: selectedCategory!.cellColor)?.darken(byPercentage: CGFloat(indexPath.row) / CGFloat(todoItems!.count)){
+                cell.backgroundColor = color
+                cell.textLabel?.textColor = ContrastColorOf(color, returnFlat: true)
+            }
             // Operador ternario
             // valor = condicion ? valorVerdadero : valorFalso
             cell.accessoryType = item.done ? .checkmark : .none
@@ -108,7 +113,7 @@ class TodoListViewController: SwipeCellTableViewController{
                     realm.delete(itemForDeletion)
                 }
             }catch{
-            print("Error deleting item selected, \(error)")
+            print("Error deleting item, \(error)")
             }
         }
     }
