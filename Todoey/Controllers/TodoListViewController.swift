@@ -23,6 +23,19 @@ class TodoListViewController: SwipeCellTableViewController{
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.rowHeight = 75.0
+        tableView.separatorStyle = .none
+        
+        if let colorHex = selectedCategory?.cellColor{
+            navigationController?.navigationBar.barTintColor = UIColor(hexString: colorHex)
+        }
+        
+    }
+    
+    override func viewWillAppear( _ animated: Bool){
+        if let colourHex = selectedCategory?.cellColor{
+            guard let navBar = navigationController?.navigationBar else { fatalError("Navigation Controller does not exist.")}
+            navBar.barTintColor = UIColor(hexString: colourHex)
+        }
     }
     
    
